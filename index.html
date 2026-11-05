@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>12th Colchester Sea Scouts - Bulk Order Form</title>
+<style>
+  :root {
+    --purple: #7413dc;
+    --navy: #003982;
+    --grey: #666;
+    --border: #d5d9e0;
+  }
+  * { box-sizing: border-box; }
+  body {
+    font-family: Arial, Helvetica, sans-serif;
+    max-width: 980px;
+    margin: 0 auto;
+    padding: 24px;
+    color: #222;
+    background: #fff;
+  }
+  header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+    border-bottom: 4px solid var(--purple);
+    padding-bottom: 12px;
+    margin-bottom: 20px;
+  }
+  header h1 { color: var(--navy); font-size: 24px; margin: 0 0 4px 0; }
+  header p { margin: 0; color: var(--grey); font-size: 14px; }
+  .scouts-logo { color: var(--purple); font-weight: bold; font-size: 22px; text-align: right; }
+  .scouts-logo span { display: block; font-size: 12px; color: var(--navy); font-weight: bold; }
+  section { margin-bottom: 26px; }
+  h2 {
+    font-size: 16px;
+    color: var(--navy);
+    border-left: 4px solid var(--purple);
+    padding-left: 8px;
+    margin-bottom: 12px;
+  }
+  .customer-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px 24px; }
+  .field label { display: block; font-size: 12px; font-weight: bold; color: var(--grey); margin-bottom: 4px; }
+  .field.full { grid-column: 1 / -1; }
+  .field input, .field textarea {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    font-size: 14px;
+    font-family: inherit;
+  }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th { background: var(--navy); color: #fff; text-align: left; padding: 8px 6px; font-size: 12px; }
+  td { padding: 6px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+  select, input[type="text"], input[type="number"] {
+    width: 100%;
+    padding: 6px;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    font-size: 13px;
+    font-family: inherit;
+  }
+  input[type="number"] { text-align: center; }
+  .unit-price, .line-total { text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; }
+  .remove-btn {
+    background: #c0392b; color: #fff; border: none; border-radius: 4px;
+    padding: 6px 10px; cursor: pointer; font-size: 12px;
+  }
+  .remove-btn:hover { background: #992d22; }
+  .toolbar { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 12px; }
+  .toolbar button {
+    color: #fff; border: none; border-radius: 4px; padding: 10px 16px;
+    font-size: 13px; font-weight: bold; cursor: pointer;
+  }
+  .add-btn { background: var(--purple); }
+  .add-btn:hover { background: #5c0fb0; }
+  .print-btn { background: var(--navy); }
+  .print-btn:hover { background: #002a60; }
+  .send-btn { background: #2e7d32; }
+  .send-btn:hover { background: #245e28; }
+  .totals { margin-top: 14px; display: flex; justify-content: flex-end; }
+  .totals table { width: 260px; }
+  .totals td { padding: 6px 4px; border: none; }
+  .totals .grand-total { font-size: 16px; font-weight: bold; color: var(--navy); border-top: 2px solid var(--navy); }
+  .note { font-size: 12px; color: var(--grey); margin-top: 6px; }
+  .price-table th, .price-table td { padding: 7px 8px; border: 1px solid var(--border); }
+  .price-table td.num, .price-table th.num { text-align: center; }
+  .price-table tr.group td { background: #efe6fb; color: var(--purple); font-weight: bold; }
+  .size-charts { font-size: 12px; }
+  .size-charts table { margin-bottom: 14px; }
+  .size-charts th, .size-charts td { text-align: center; padding: 4px; border: 1px solid var(--border); }
+  .size-charts caption { text-align: left; font-weight: bold; color: var(--navy); padding-bottom: 4px; font-size: 12.5px; }
+  footer { border-top: 1px solid var(--border); padding-top: 14px; font-size: 12px; color: var(--grey); }
+  @media (max-width: 760px) {
+    body { padding: 14px; }
+    .customer-grid { grid-template-columns: 1fr; }
+    #order-table thead { display: none; }
+    #order-table, #order-table tbody, #order-table tr, #order-table td { display: block; width: 100%; }
+    #order-table tr { border: 1px solid var(--border); border-radius: 6px; padding: 8px; margin-bottom: 10px; }
+    #order-table td { border: none; padding: 4px 0; display: flex; align-items: center; gap: 8px; }
+    #order-table td::before {
+      content: attr(data-label); font-weight: bold; font-size: 12px; color: var(--grey); width: 95px; flex: none;
+    }
+    #order-table td.no-print::before { content: ""; width: 0; }
+    .unit-price, .line-total { justify-content: flex-start; }
+    .size-charts { overflow-x: auto; }
+    .size-charts table { min-width: 460px; }
+    .toolbar button { flex: 1 1 100%; }
+  }
+  @media print {
+    .no-print { display: none !important; }
+    body { padding: 0; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div>
+    <h1>Bulk Order Form</h1>
+    <p>12th Colchester Sea Scouts &middot; Scoutprintdirect</p>
+  </div>
+  <div class="scouts-logo">Scouts
+    <span>12th Colchester<br>Sea Scouts</span>
+  </div>
+</header>
+
+<section>
+  <h2>Your Details</h2>
+  <div class="customer-grid">
+    <div class="field">
+      <label for="cust-name">Name</label>
+      <input type="text" id="cust-name" placeholder="Full name">
+    </div>
+    <div class="field">
+      <label for="cust-phone">Contact Number</label>
+      <input type="text" id="cust-phone" placeholder="Phone number">
+    </div>
+    <div class="field">
+      <label for="cust-email">Email Address</label>
+      <input type="text" id="cust-email" placeholder="Email address">
+    </div>
+    <div class="field full">
+      <label for="cust-address">Address (including postcode) *</label>
+      <textarea id="cust-address" rows="3" placeholder="House number / street, town, postcode"></textarea>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>Order Items</h2>
+  <table id="order-table">
+    <thead>
+      <tr>
+        <th style="width:42%">Item</th>
+        <th style="width:16%">Size</th>
+        <th style="width:7%">Qty</th>
+        <th style="width:9%">Unit Price</th>
+        <th style="width:9%">Line Total</th>
+        <th style="width:8%" class="no-print"></th>
+      </tr>
+    </thead>
+    <tbody id="order-body"></tbody>
+  </table>
+
+  <div class="toolbar no-print">
+    <button class="add-btn" onclick="addRow()">+ Add Item</button>
+    <button class="print-btn" onclick="window.print()">Print / Save as PDF</button>
+    <button class="send-btn" onclick="sendOrder()">Send Order</button>
+  </div>
+
+  <p class="note">Every T-shirt has the small group logo on the front and a large design on the back &ndash; choose which back design you want for each shirt. Prices update automatically.</p>
+
+  <div class="totals">
+    <table>
+      <tr><td>Number of Items:</td><td id="total-qty" style="text-align:right">0</td></tr>
+      <tr class="grand-total"><td>Grand Total:</td><td id="grand-total" style="text-align:right">£0.00</td></tr>
+    </table>
+  </div>
+</section>
+
+<section>
+  <h2>Price List</h2>
+  <table class="price-table">
+    <thead><tr><th>T-shirt</th><th class="num">Price</th></tr></thead>
+    <tbody>
+      <tr><td>Youth (ages 3-4 to 14-15)</td><td class="num">£10</td></tr>
+      <tr><td>Adult (S to 3XL)</td><td class="num">£12</td></tr>
+    </tbody>
+  </table>
+  <p class="note"><strong>Two back designs available:</strong> (1) Norfolk Broads &ndash; 12th Colchester Sea Scouts, October 2026; (2) &ldquo;I Survived Storm&rdquo; &ndash; Broads 26. Small group logo on the front of both. All prices in GBP.</p>
+</section>
+
+<section class="size-charts">
+  <h2>Size Reference Charts</h2>
+  <table>
+    <caption>Adult T-shirt &ndash; Chest (to fit), inches</caption>
+    <thead><tr><th>Size</th><th>S</th><th>M</th><th>L</th><th>XL</th><th>XXL</th><th>3XL</th></tr></thead>
+    <tbody><tr><td>Chest</td><td>35/37</td><td>38/40</td><td>41/43</td><td>44/46</td><td>47/49</td><td>50/52</td></tr></tbody>
+  </table>
+  <table>
+    <caption>Youth T-shirt &ndash; Age / Height (cm) / Chest (to fit)</caption>
+    <thead><tr><th>Size</th><th>3-4</th><th>5-6</th><th>7-8</th><th>9-11</th><th>12-13</th><th>14-15</th></tr></thead>
+    <tbody>
+      <tr><td>Height (cm)</td><td>104</td><td>116</td><td>128</td><td>140</td><td>152</td><td>164</td></tr>
+      <tr><td>Chest</td><td>22/24</td><td>26/28</td><td>30</td><td>32</td><td>34</td><td>36</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<footer>
+  <p><strong>How to order:</strong> Complete this form, then either save it as a PDF (Print / Save as PDF) and email it as an attachment to Scoutprintdirect@outlook.com, or press the "Send Order" button to send it straight from your own email. Once we've received and checked your order, we'll be in contact with payment details and a payment link.</p>
+</footer>
+
+<script>
+const YOUTH = ["3-4","5-6","7-8","9-11","12-13","14-15"];
+const ADULT = ["S","M","L","XL","XXL","3XL"];
+
+const LOGO_TEXT = "Front + rear logo";
+const NAME_FEE = 2;
+
+const ITEMS = {
+  "Youth T-shirt - Norfolk Broads design (back)":        { sizes: YOUTH, price: 10 },
+  "Youth T-shirt - I Survived Storm design (back)":      { sizes: YOUTH, price: 10 },
+  "Adult T-shirt - Norfolk Broads design (back)":        { sizes: ADULT, price: 12 },
+  "Adult T-shirt - I Survived Storm design (back)":      { sizes: ADULT, price: 12 }
+};
+
+let rowCount = 0;
+
+function el(id) { return document.getElementById(id); }
+function money(n) { return "£" + n.toFixed(2); }
+function opts(list) { return list.map(v => `<option value="${v}">${v}</option>`).join(""); }
+
+function addRow() {
+  rowCount++;
+  const id = rowCount;
+  const tr = document.createElement("tr");
+  tr.id = "row-" + id;
+  tr.innerHTML = `
+    <td data-label="Item"><select id="item-${id}" onchange="onItemChange(${id})">${opts(Object.keys(ITEMS))}</select></td>
+    <td data-label="Size"><select id="size-${id}"></select></td>
+    <td data-label="Qty"><input type="number" id="qty-${id}" min="1" value="1" oninput="recalcRow(${id})"></td>
+    <td data-label="Unit price" class="unit-price" id="unit-${id}">£0.00</td>
+    <td data-label="Line total" class="line-total" id="line-${id}">£0.00</td>
+    <td class="no-print"><button class="remove-btn" onclick="removeRow(${id})">Remove</button></td>
+  `;
+  el("order-body").appendChild(tr);
+  onItemChange(id);
+}
+
+function onItemChange(id) {
+  const item = ITEMS[el("item-" + id).value];
+  el("size-" + id).innerHTML = opts(item.sizes);
+  recalcRow(id);
+}
+
+function unitOf(id) {
+  const item = ITEMS[el("item-" + id).value];
+  let unit = item.price;
+  return unit;
+}
+
+function qtyOf(id) { return parseInt(el("qty-" + id).value, 10) || 0; }
+
+function recalcRow(id) {
+  const unit = unitOf(id);
+  el("unit-" + id).textContent = money(unit);
+  el("line-" + id).textContent = money(unit * qtyOf(id));
+  recalcTotals();
+}
+
+function removeRow(id) {
+  const row = el("row-" + id);
+  if (row) row.remove();
+  recalcTotals();
+}
+
+function recalcTotals() {
+  let totalQty = 0, grandTotal = 0;
+  document.querySelectorAll("#order-body tr").forEach(tr => {
+    const id = tr.id.split("-")[1];
+    const qty = qtyOf(id);
+    totalQty += qty;
+    grandTotal += unitOf(id) * qty;
+  });
+  el("total-qty").textContent = totalQty;
+  el("grand-total").textContent = money(grandTotal);
+}
+
+function sendOrder() {
+  const name = el("cust-name").value.trim();
+  const phone = el("cust-phone").value.trim();
+  const email = el("cust-email").value.trim();
+  const address = el("cust-address").value.trim().replace(/\s*\n\s*/g, ", ");
+
+  if (!name) {
+    alert("Please enter your name before sending the order.");
+    return;
+  }
+  if (!address) {
+    alert("Please enter your address before sending the order.");
+    return;
+  }
+
+  const lines = [];
+  document.querySelectorAll("#order-body tr").forEach(tr => {
+    const id = tr.id.split("-")[1];
+    const qty = qtyOf(id);
+    if (qty < 1) return;
+    lines.push(
+      `${qty} x ${el("item-" + id).value} | Size: ${el("size-" + id).value} | ${LOGO_TEXT}` +
+      `| ${money(unitOf(id))} each = ${el("line-" + id).textContent}`
+    );
+  });
+
+  if (!lines.length) {
+    alert("Please add at least one item with a quantity before sending the order.");
+    return;
+  }
+
+  const subject = `Bulk Order - 12th Colchester Sea Scouts - ${name}`;
+  const body = [
+    "Group: 12th Colchester Sea Scouts",
+    `Name: ${name}`,
+    `Contact Number: ${phone}`,
+    `Email Address: ${email}`,
+    `Address: ${address}`,
+    "",
+    "Order Items:",
+    ...lines,
+    "",
+    `Number of Items: ${el("total-qty").textContent}`,
+    `Grand Total: ${el("grand-total").textContent}`
+  ].join("\n");
+
+  window.location.href = `mailto:Scoutprintdirect@outlook.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+}
+
+// Start with 3 blank rows
+addRow();
+addRow();
+addRow();
+</script>
+
+</body>
+</html>
